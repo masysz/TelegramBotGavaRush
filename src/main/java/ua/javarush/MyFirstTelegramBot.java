@@ -42,10 +42,16 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // TODO: основний функціонал бота будемо писати тут
         Long chatId = getChatId(update);
-        if (update.hasMessage() && update.getMessage().getText().equals("/game")) {
+
+        if (update.hasMessage() && update.getMessage().getText().equals("/audio")) {
+            executeAsync(createAudioMessage(chatId, "Ouch-6"));
+        }
+        if (update.hasMessage() && update.getMessage().getText().equals("/video")) {
             SendVideo sendVideo = createVideoMessage(chatId, "very");
             executeAsync(sendVideo);
-            executeAsync(createAudioMessage(chatId, "Ouch-6"));
+        }
+
+        if (update.hasMessage() && update.getMessage().getText().equals("/quest")) {
             Map map = Map.of(
                     "Злам холодильника ", "step_1_btn",
                     "Мишко тиріт сосиски з холодильнику ", "step_1_btn"
@@ -90,9 +96,12 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().getText().equals("/start")) {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(update.getMessage().getChatId().toString());
-            sendMessage.setText("Привет, я умею запускать таймер - /time,\nзапускать квест про кота - /game, \n" +
+            sendMessage.setText("Привет, я умею запускать таймер - /time,\n" +
+                    "пытаться запустить квест про кота - /quest, \n" +
                     "умею показывать погоду - /weather \n" +
-                    "(для выхода из выбора города - /exit, \n" +
+                    "(для выхода из выбора города - /exit), \n" +
+                    "запускаю тестовое видео - /video,  \n" +
+                    "запускаю тестовое audio - /audio,  \n" +
                     "я буду уметь запускать прикольную игруху ,  \n" +
                     "я попробую переехать на AWS landa, \n" +
                     "а также обрасту кнопками и возможно чатом с GPT\n" +
@@ -106,7 +115,7 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
 
 
         if (update.hasCallbackQuery()) {
-            if (update.getCallbackQuery().getData().equals("step_1_btn") && getGlories(chatId) == 0) {
+            if (update.getCallbackQuery().getData().equals("step_1_btn") || getGlories(chatId) == 0) {
                 Map map = Map.of("Взяти сосиску! +20 слави", "step_2_btn",
                         "Взяти рибку! +20 слави", "step_2_btn",
                         "Скинути банку з огірками! +20 слави", "step_2_btn");
