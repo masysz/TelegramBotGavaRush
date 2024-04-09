@@ -42,7 +42,17 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // TODO: основний функціонал бота будемо писати тут
         Long chatId = getChatId(update);
-        if (update.hasMessage() && update.getMessage().getText().equals("/time")) {
+        if (update.hasMessage() && update.getMessage().getText().equals("/game")) {
+            SendVideo sendVideo = createVideoMessage(chatId, "very");
+            executeAsync(sendVideo);
+            executeAsync(createAudioMessage(chatId, "Ouch-6"));
+            Map map = Map.of(
+                    "Злам холодильника ", "step_1_btn",
+                    "Мишко тиріт сосиски з холодильнику ", "step_1_btn"
+            );
+            sendMessage(chatId, 0, "step_1_pic", STEP_1_TEXT, map);
+        }
+       if (update.hasMessage() && update.getMessage().getText().equals("/time")) {
             Timer timer = new Timer();
             timer.timer(chatId);
         }
@@ -94,17 +104,7 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
             }
         }
 
-        if (update.hasMessage() && update.getMessage().getText().equals("/game")) {
-            SendVideo sendVideo = createVideoMessage(chatId, "very");
-            executeAsync(sendVideo);
-            executeAsync(createAudioMessage(chatId, "Ouch-6"));
 
-            Map map = Map.of(
-                    "Злам холодильника ", "step_1_btn",
-                    "Мишко тиріт сосиски з холодильнику ", "step_1_btn"
-            );
-            sendMessage(chatId, 0, "step_1_pic", STEP_1_TEXT, map);
-        }
         if (update.hasCallbackQuery()) {
             if (update.getCallbackQuery().getData().equals("step_1_btn") && getGlories(chatId) == 0) {
                 Map map = Map.of("Взяти сосиску! +20 слави", "step_2_btn",
