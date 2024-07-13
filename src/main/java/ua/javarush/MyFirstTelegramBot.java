@@ -4,7 +4,9 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.methods.send.*;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
@@ -19,11 +21,14 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
 
 
     private boolean weatherOn = false;
+    private boolean light = false;
 
     public static void main(String[] args) throws TelegramApiException {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(new MyFirstTelegramBot());
+
     }
+
 
     @Override
     public String getBotUsername() {
@@ -58,13 +63,33 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
             );
             sendMessage(chatId, 0, "step_1_pic", STEP_1_TEXT, map);
         }
-       if (update.hasMessage() && update.getMessage().getText().equals("/time")) {
+        if (update.hasMessage() && update.getMessage().getText().equals("/time")) {
             Timer timer = new Timer();
             timer.timer(chatId);
         }
 
+
         if (update.hasMessage() && update.getMessage().getText().equals("/exit")) {
             weatherOn = false;
+        }
+
+        if (update.hasMessage() && update.getMessage().getText().equals("/light")) {
+//          new Thread(()->{
+//            while (true){
+//                try {
+//                    light(chatId);
+//                } catch (TelegramApiException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                try {
+//                  Thread.sleep(5000);
+//              } catch (InterruptedException e) {
+//                  throw new RuntimeException(e);
+//              }
+//          }
+//            }).start();
+            light(chatId);
+
         }
 
         if (update.hasMessage() && update.getMessage().getText().equals("/weather")) {
@@ -155,8 +180,34 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    private void light(Long chatId)  {
+        light = Ewelink.Status();
+        SendMessage sendMessage3 = new SendMessage();
+        sendMessage3.setChatId(chatId);
+
+            if (light) {
+                sendMessage3.setText("Світло є " + " \uD83D\uDCA1 !!!" + " График - " + "https://kyiv.yasno.com.ua/schedule-turn-off-electricity");
+                try {
+                    executeAsync(sendMessage3);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                sendMessage3.setText("Світла нема " + " \uD83D\uDD6F ");
+                try {
+                    execute(sendMessage3);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+
     public String weatherInfo(String city) {
         //String city = "Kiev";
+
         String url = "https://api.openweathermap.org/data/2.5/weather?q=";
         String result = "";
         String apikey = "&appid=28d6f9097d09a9ac9432ad1204cd72df&lang=ua&units=metric&cnt=2";
@@ -173,7 +224,7 @@ public class MyFirstTelegramBot extends TelegramLongPollingBot {
         System.out.println(response.getStatusCode());
         if (response.getStatusCode() == 200) {
             result = "City - " + jsonPath.get("name").toString() + "\n"
-                    + "Description - " + jsonPath.get("weather.description").toString()+ "\n"
+                    + "Description - " + jsonPath.get("weather.description").toString() + "\n"
                     + "Temperature - " + jsonPath.get("main.temp").toString();
             System.out.println(result);
             return result;

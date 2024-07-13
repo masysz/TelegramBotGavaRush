@@ -6,8 +6,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -64,6 +66,8 @@ public class TelegramBotUtils {
         markup.setKeyboard(keyboard);
         message.setReplyMarkup(markup);
     }
+
+
 
     public static SendPhoto createPhotoMessage(Long chatId, String name) {
         try {
