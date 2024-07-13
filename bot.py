@@ -8,7 +8,7 @@ from g4f.client import Client
 
 client = Client()
 
-bot = telebot.TeleBot("6284136030:AAG3RzHcKR8ItpssmrovSEufFYW3k73Kmw8")
+bot = telebot.TeleBot("6895350816:AAHHVDMiOuAlUKWuX1EkAIH30TiP7K-MSzk")
 
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
